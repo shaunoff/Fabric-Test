@@ -10,6 +10,7 @@ import {
 	MdFormatItalic,
 	MdFormatUnderlined,
 } from 'react-icons/lib/md';
+import { TwitterPicker } from 'react-color'
 
 
 class CanvasTest extends Component {
@@ -41,13 +42,17 @@ class CanvasTest extends Component {
 	textPosition(){
 		this.setState({textPositionSelect: !this.state.textPositionselect})
 	}
-	changeColor(){
+	changeColor(color){
 		const obj = this.canvas.getActiveObject()
-		var style = { };
-    style.fill = '#007681';
-		obj.setSelectionStyles(style)
-		// obj.setColor("#6bada7")
-		// obj.opacity = 0.1
+		if (obj.setSelectionStyles && obj.isEditing) {
+			let style = {}
+			style.fill = color.hex
+			obj.setSelectionStyles(style)
+		}
+		else {
+			obj.removeStyle('fill')
+			obj.setColor(color.hex)
+		}
 		this.canvas.renderAll()
 	}
 	render() {
@@ -63,6 +68,9 @@ class CanvasTest extends Component {
 					<MdCropSquare style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
 					<div style={{borderRight: '1px solid #ccc'}}></div>
 					<MdFormatColorText style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
+					<TwitterPicker 
+            onChange={ this.changeColor }
+          />
 					<MdFormatColorFill style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
 					<div style={{borderRight: '1px solid #ccc'}}></div>
 					<MdFormatBold style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
