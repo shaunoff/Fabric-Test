@@ -98,13 +98,11 @@ class CanvasTest extends Component {
 	}
 
 	setStyle(object, styleName, value) {
-		// console.log(styleName, value)
 		object.set(styleName, value)
 		this.canvas.renderAll()
 	}
 
 	setIndividualStyles(object, styleName, value) {
-		console.log(value)
 		let style = {}
 		style[styleName] = value
 		object.setSelectionStyles(style)
