@@ -73,7 +73,7 @@ class CanvasTest extends Component {
 
 				case 'italic':
 					if (object.setSelectionStyles && object.isEditing) {
-						this.setIndividualStyles(object, 'fontStyle', curStyles[0][action] ? '' : 'italic')
+						this.setIndividualStyles(object, 'fontStyle', curStyles[0]['fontStyle'] ? '' : 'italic')
 					} else {
 						let isItalic = this.getStyle(object, 'fontStyle') === 'italic'
 						this.setStyle(object, 'fontStyle', isItalic ? '' : 'italic')
@@ -82,7 +82,7 @@ class CanvasTest extends Component {
 
 				case 'bold':
 					if (object.setSelectionStyles && object.isEditing) {
-						this.setIndividualStyles(object, 'fontWeight', curStyles[0][action] ? '' : 'bold')
+						this.setIndividualStyles(object, 'fontWeight', curStyles[0]['fontWeight'] ? '' : 'bold')
 					} else {
 						let isBold = this.getStyle(object, 'fontWeight') === 'bold'
 						this.setStyle(object, 'fontWeight', isBold ? '' : 'bold')
@@ -104,6 +104,7 @@ class CanvasTest extends Component {
 	}
 
 	setIndividualStyles(object, styleName, value) {
+		console.log(value)
 		let style = {}
 		style[styleName] = value
 		object.setSelectionStyles(style)
