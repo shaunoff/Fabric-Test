@@ -59,8 +59,8 @@ class CanvasTest extends Component {
 
 	editTextStyles(action) {
 		const object = this.canvas.getActiveObject()
-		let curStyles = object.getSelectionStyles()
 		if (object) {
+			let curStyles = object.getSelectionStyles()
 			switch(action) {
 				case 'underline':
 					if (object.setSelectionStyles && object.isEditing) {
