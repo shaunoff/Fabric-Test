@@ -21,7 +21,8 @@ class CanvasTest extends Component {
 			textPositionSelect: false
 		}
 		this.addText = this.addText.bind(this)
-		this.changeColor = this.changeColor.bind(this)
+		this.changeTextColor = this.changeTextColor.bind(this)
+		this.changeTextBGColor = this.changeTextBGColor.bind(this)
 		this.textPosition = this.textPosition.bind(this)
 		this.editTextStyles = this.editTextStyles.bind(this)
 	}
@@ -43,18 +44,36 @@ class CanvasTest extends Component {
 		this.setState({textPositionSelect: !this.state.textPositionselect})
 	}
 
-	changeColor(color){
-		const obj = this.canvas.getActiveObject()
-		if (obj.setSelectionStyles && obj.isEditing) {
-			let style = {}
-			style.fill = color.hex
-			obj.setSelectionStyles(style)
-		}
-		else {
-			obj.removeStyle('fill')
-			obj.setColor(color.hex)
+	changeTextColor(color){
+		const object = this.canvas.getActiveObject()
+		if (object) {
+			if (object.setSelectionStyles && object.isEditing) {
+				let style = {}
+				style.fill = color.hex
+				object.setSelectionStyles(style)
+			}
+			else {
+				object.removeStyle('fill')
+				object.setColor(color.hex)
+			}
 		}
 		this.canvas.renderAll()
+	}
+
+	changeTextBGColor(color){
+		const object = this.canvas.getActiveObject()
+		if (object) {
+			if (object.setSelectionStyles && object.isEditing) {
+				let style = {}
+				style.textBackgroundColor = color.hex
+				object.setSelectionStyles(style)
+			}
+			else {
+				object.removeStyle('textBackgroundColor')
+				object.set('textBackgroundColor', color.hex)
+			}
+			this.canvas.renderAll()
+		}
 	}
 
 	editTextStyles(action) {
@@ -112,7 +131,7 @@ class CanvasTest extends Component {
 
 		return (
 			<div>
-				<div onClick={this.changeColor}>change to red</div>
+				<div onClick={this.changeTextColor}>change to red</div>
 				<div>This is a test canvas</div>
 				<div onClick={this.textPosition}>Text Active</div>
 				<div style={{display: 'flex', background: "#fafafa", border: '1px solid #ccc', width: '500px', marginLeft: '60px'}}>
@@ -122,9 +141,12 @@ class CanvasTest extends Component {
 					<div style={{borderRight: '1px solid #ccc'}}></div>
 					<MdFormatColorText style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
 					<TwitterPicker 
-            onChange={ this.changeColor }
+            onChange={ this.changeTextColor }
           />
 					<MdFormatColorFill style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
+					<TwitterPicker 
+            onChange={ this.changeTextBGColor }
+          />
 					<div style={{borderRight: '1px solid #ccc'}}></div>
 					<MdFormatBold onClick={() => this.editTextStyles('bold')} style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
 					<MdFormatItalic onClick={() => this.editTextStyles('italic')} style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
