@@ -23,12 +23,11 @@ class CanvasTest extends Component {
 		this.addText = this.addText.bind(this)
 		this.changeColor = this.changeColor.bind(this)
 		this.textPosition = this.textPosition.bind(this)
-		this.edTextStyles = this.edTextStyles.bind(this)
+		this.editTextStyles = this.editTextStyles.bind(this)
 	}
 
 	componentDidMount(){
 		this.canvas = new window.fabric.Canvas('fabricTest');
-		console.log(this.canvas)
 		this.canvas.on('mouse:down', (click) =>{
   		if(this.state.textPositionSelect){
 				this.addText(click.e.layerX, click.e.layerY)
@@ -43,6 +42,7 @@ class CanvasTest extends Component {
 	textPosition(){
 		this.setState({textPositionSelect: !this.state.textPositionselect})
 	}
+
 	changeColor(color){
 		const obj = this.canvas.getActiveObject()
 		if (obj.setSelectionStyles && obj.isEditing) {
@@ -51,35 +51,63 @@ class CanvasTest extends Component {
 			obj.setSelectionStyles(style)
 		}
 		else {
-			obj.removeStyle('fill') // ADD TO TOGGLEUNDERLINE
+			obj.removeStyle('fill')
 			obj.setColor(color.hex)
 		}
 		this.canvas.renderAll()
 	}
-	edTextStyles(action){
-		const obj = this.canvas.getActiveObject()
-		if (obj.setSelectionStyles && obj.isEditing) {
-			let style = {}
-			let curStyles = obj.getSelectionStyles()
-			console.log(curStyles[0][action])
-			if (!curStyles[0][action]) {
-				style[action] = true
-				obj.setSelectionStyles(style)
+
+	editTextStyles(action) {
+		const object = this.canvas.getActiveObject()
+		let curStyles = object.getSelectionStyles()
+		if (object) {
+			switch(action) {
+				case 'underline':
+					if (object.setSelectionStyles && object.isEditing) {
+						this.setIndividualStyles(object, 'underline', !curStyles[0][action])
+					} else {
+						let isUnderline = this.getStyle(object, 'underline') === true
+						this.setStyle(object, 'underline', isUnderline ? false : true)
+					}
+				break
+
+				case 'italic':
+					if (object.setSelectionStyles && object.isEditing) {
+						this.setIndividualStyles(object, 'fontStyle', curStyles[0][action] ? '' : 'italic')
+					} else {
+						let isItalic = this.getStyle(object, 'fontStyle') === 'italic'
+						this.setStyle(object, 'fontStyle', isItalic ? '' : 'italic')
+					}
+				break
+
+				case 'bold':
+					if (object.setSelectionStyles && object.isEditing) {
+						this.setIndividualStyles(object, 'fontWeight', curStyles[0][action] ? '' : 'bold')
+					} else {
+						let isBold = this.getStyle(object, 'fontWeight') === 'bold'
+						this.setStyle(object, 'fontWeight', isBold ? '' : 'bold')
+					}
+				break
 			}
-			else {
-				style[action] = false
-				obj.setSelectionStyles(style)
-			}
-		}
-		else {
-			if (obj.hasOwnProperty(action) && obj[action] === true) {
-				obj.set(action, false)
-			}
-			else obj.set(action, true)
 		}
 		this.canvas.renderAll()
 	}
 
+	getStyle(object, styleName) {
+		return object[styleName]
+	}
+
+	setStyle(object, styleName, value) {
+		// console.log(styleName, value)
+		object.set(styleName, value)
+		this.canvas.renderAll()
+	}
+
+	setIndividualStyles(object, styleName, value) {
+		let style = {}
+		style[styleName] = value
+		object.setSelectionStyles(style)
+	}
 
 	render() {
 
@@ -99,9 +127,9 @@ class CanvasTest extends Component {
           />
 					<MdFormatColorFill style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
 					<div style={{borderRight: '1px solid #ccc'}}></div>
-					<MdFormatBold style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
-					<MdFormatItalic style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
-					<MdFormatUnderlined onClick={() => this.edTextStyles('underline')} style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
+					<MdFormatBold onClick={() => this.editTextStyles('bold')} style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
+					<MdFormatItalic onClick={() => this.editTextStyles('italic')} style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
+					<MdFormatUnderlined onClick={() => this.editTextStyles('underline')} style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
 				</div>
 				<canvas id="fabricTest" width="500" height="500" style={{marginLeft: "60px", border: '1px solid #ccc'}}/>
 			</div>
