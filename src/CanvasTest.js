@@ -23,6 +23,7 @@ class CanvasTest extends Component {
 		this.addText = this.addText.bind(this)
 		this.changeColor = this.changeColor.bind(this)
 		this.textPosition = this.textPosition.bind(this)
+		this.edTextStyles = this.edTextStyles.bind(this)
 	}
 
 	componentDidMount(){
@@ -50,11 +51,36 @@ class CanvasTest extends Component {
 			obj.setSelectionStyles(style)
 		}
 		else {
-			obj.removeStyle('fill')
+			obj.removeStyle('fill') // ADD TO TOGGLEUNDERLINE
 			obj.setColor(color.hex)
 		}
 		this.canvas.renderAll()
 	}
+	edTextStyles(action){
+		const obj = this.canvas.getActiveObject()
+		if (obj.setSelectionStyles && obj.isEditing) {
+			let style = {}
+			let curStyles = obj.getSelectionStyles()
+			console.log(curStyles[0][action])
+			if (!curStyles[0][action]) {
+				style[action] = true
+				obj.setSelectionStyles(style)
+			}
+			else {
+				style[action] = false
+				obj.setSelectionStyles(style)
+			}
+		}
+		else {
+			if (obj.hasOwnProperty(action) && obj[action] === true) {
+				obj.set(action, false)
+			}
+			else obj.set(action, true)
+		}
+		this.canvas.renderAll()
+	}
+
+
 	render() {
 
 		return (
@@ -75,7 +101,7 @@ class CanvasTest extends Component {
 					<div style={{borderRight: '1px solid #ccc'}}></div>
 					<MdFormatBold style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
 					<MdFormatItalic style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
-					<MdFormatUnderlined style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
+					<MdFormatUnderlined onClick={() => this.edTextStyles('underline')} style={{margin: "10px"}} size="25" color="rgba(0,0,0,.5)"/>
 				</div>
 				<canvas id="fabricTest" width="500" height="500" style={{marginLeft: "60px", border: '1px solid #ccc'}}/>
 			</div>
